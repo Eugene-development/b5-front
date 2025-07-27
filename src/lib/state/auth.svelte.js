@@ -88,6 +88,7 @@ export async function login(email, password, remember = false) {
 				email_verified_at: result.user.email_verified_at || null
 			};
 
+			// Token is already saved by loginUser API function
 			auth.token = result.token || null;
 			auth.isAuthenticated = true;
 			auth.emailVerified = result.user.email_verified || false;

@@ -1,11 +1,15 @@
 <script>
 	import { login, auth } from '$lib/state/auth.svelte.js';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 
 	// Get redirectTo parameter from URL
-	let redirectTo = $derived(page.url.searchParams.get('redirectTo') || '/dashboard');
+	let redirectTo = $derived.by(() => {
+		const redirect = page.url.searchParams.get('redirectTo') || '/dashboard';
+		console.log('🎯 RedirectTo calculated:', redirect);
+		return redirect;
+	});
 
 	// Form state using Svelte 5 runes
 	let formData = $state({
@@ -73,25 +77,30 @@
 				console.log('🔄 Auth state after login:', {
 					isAuthenticated: auth.isAuthenticated,
 					emailVerified: auth.emailVerified,
-					user: auth.user
+					user: auth.user,
+					token: auth.token
 				});
 
-				// Wait a bit for cookies to be set
-				await new Promise((resolve) => setTimeout(resolve, 100));
+				// Increased delay for state synchronization
+				await new Promise((resolve) => setTimeout(resolve, 300));
 
-				// Принудительно обновляем все серверные данные
-				console.log('🔄 Invalidating all server data...');
-				await invalidateAll();
+				console.log('🔄 Final auth state before redirect:', {
+					isAuthenticated: auth.isAuthenticated,
+					emailVerified: auth.emailVerified,
+					redirectTo: redirectTo
+				});
 
-				// Check if email verification is required after state update
+				// Manually redirect after successful login
+				console.log('✅ Login completed, initiating redirect');
+
+				// Use replace instead of push to avoid adding to history
 				if (!auth.emailVerified) {
 					console.log('📧 Email not verified, redirecting to email-verify');
-					goto('/email-verify');
-					return;
+					goto('/email-verify', { replaceState: true });
+				} else {
+					console.log('🎯 Redirecting to:', redirectTo);
+					goto(redirectTo, { replaceState: true });
 				}
-
-				console.log('🎯 Redirecting to dashboard...');
-				goto(redirectTo);
 			} else {
 				console.log('❌ Login failed:', auth.error);
 				errors.general = auth.error || 'Ошибка авторизации';

@@ -4,6 +4,8 @@
  */
 
 import { API_CONFIG, buildApiUrl, getAuthHeaders } from '$lib/config/api.js';
+import { handleApiError, validateResponse, logError } from '$lib/utils/error-handling.js';
+import { perfMonitor } from '$lib/utils/performance.js';
 
 /**
  * API Error class for structured error handling
@@ -30,6 +32,11 @@ export class ApiError extends Error {
  */
 export async function apiRequest(endpoint, options = {}) {
 	const { method = 'GET', body = null, headers = {}, requireAuth = true } = options;
+
+	const requestId = `${method}_${endpoint.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+	// Start performance monitoring
+	perfMonitor.start(requestId);
 
 	try {
 		// Prepare request headers
@@ -59,19 +66,21 @@ export async function apiRequest(endpoint, options = {}) {
 		// Make the request to Laravel backend
 		const response = await fetch(buildApiUrl(endpoint), requestConfig);
 
-		// Handle response
-		if (!response.ok) {
-			await handleErrorResponse(response);
-		}
+		// Validate response using new error handling
+		await validateResponse(response, `api_${method.toLowerCase()}`);
 
 		// Parse JSON response
 		const data = await response.json();
 		return data;
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw error;
-		}
-		throw new ApiError('Network error', 0, { originalError: error });
+		// Convert to structured error and log
+		const appError = handleApiError(error, `api_${method.toLowerCase()}`);
+		logError(appError, { endpoint, method, url: buildApiUrl(endpoint) });
+
+		throw appError;
+	} finally {
+		// End performance monitoring
+		perfMonitor.end(requestId);
 	}
 }
 

@@ -2,44 +2,54 @@
 	import '../app.css';
 	import { Menu } from './layout/header/UI';
 	import { Component } from './layout/footer/UI';
-	import { auth } from '$lib/state/auth.svelte.js';
+	import { auth, initializeAuth } from '$lib/state/auth.svelte.js';
 	import { onMount } from 'svelte';
+	import { beforeNavigate, afterNavigate } from '$app/navigation';
+	import { page } from '$app/state';
+	import { guardRouteWithLoading } from '$lib/utils/route-protection.js';
 
 	/** @type {import('./$types').LayoutProps} */
-	let { data, children } = $props();
+	let { children } = $props();
 
-	// Синхронизируем server-side данные с client-side store при загрузке и изменениях
-	function syncAuthData() {
-		if (data.isAuthenticated && data.user) {
-			console.log('🔄 Syncing server data to client state:', data.user);
-			auth.user = {
-				id: data.user.id || 1,
-				name: data.user.name || data.user.email,
-				email: data.user.email,
-				email_verified: data.user.email_verified || false,
-				email_verified_at: data.user.email_verified_at || null
-			};
-			auth.isAuthenticated = true;
-			auth.emailVerified = data.user.email_verified || false;
-
-			console.log('🔄 Synced emailVerified to client state:', auth.emailVerified);
-		} else {
-			auth.user = null;
-			auth.isAuthenticated = false;
-			auth.emailVerified = false;
-		}
-		auth.loading = false;
-		auth.error = null;
-	}
-
-	onMount(() => {
-		syncAuthData();
+	// Initialize authentication from stored token on app startup
+	onMount(async () => {
+		console.log('🔧 Layout mounted, initializing auth...');
+		await initializeAuth();
+		console.log('✅ Auth initialization completed');
 	});
 
-	// Реактивно синхронизируем данные при изменениях
+	// Navigation hooks for route protection
+	beforeNavigate((navigation) => {
+		const pathname = navigation.to?.url.pathname;
+		console.log('🔄 Navigation starting to:', pathname);
+
+		if (pathname) {
+			const allowed = guardRouteWithLoading(pathname);
+
+			// If route protection returns false, cancel navigation
+			if (allowed === false) {
+				console.log('🔒 Route access denied, cancelling navigation');
+				navigation.cancel();
+			}
+		}
+	});
+
+	afterNavigate((navigation) => {
+		console.log('✅ Navigation completed to:', navigation.to?.url.pathname);
+	});
+
+	// Note: Route protection is handled by beforeNavigate hook above
+
+	// Debug reactive auth state changes
 	$effect(() => {
-		if (data.isAuthenticated !== undefined) {
-			syncAuthData();
+		if (auth.isAuthenticated !== undefined) {
+			console.log('🔄 Auth state changed:', {
+				isAuthenticated: auth.isAuthenticated,
+				user: auth.user?.name,
+				emailVerified: auth.emailVerified,
+				loading: auth.loading,
+				error: auth.error
+			});
 		}
 	});
 </script>
@@ -48,7 +58,14 @@
 	<Menu />
 </header>
 
-{@render children()}
+<!-- Loading state during auth initialization -->
+{#if auth.loading}
+	<div class="flex min-h-screen items-center justify-center">
+		<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
+	</div>
+{:else}
+	{@render children()}
+{/if}
 
 <footer class="border-t border-gray-100 bg-gray-900 py-6">
 	<Component />
