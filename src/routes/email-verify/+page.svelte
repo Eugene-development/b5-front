@@ -1,5 +1,11 @@
 <script>
-	import { auth, sendEmailVerification, resendEmailVerification } from '$lib/state/auth.svelte.js';
+	import {
+		auth,
+		sendEmailVerification,
+		resendEmailVerification,
+		checkAuth
+	} from '$lib/state/auth.svelte.js';
+	import { verifyEmailWithParams } from '$lib/api/auth.js';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
@@ -74,8 +80,59 @@
 		}
 	}
 
+	// Handle email verification from URL
+	async function handleEmailVerificationFromUrl() {
+		const urlParams = new URLSearchParams($page.url.search);
+		const id = urlParams.get('id');
+		const hash = urlParams.get('hash');
+		const expires = urlParams.get('expires');
+		const signature = urlParams.get('signature');
+
+		if (id && hash && expires && signature) {
+			console.log('📧 Email verification parameters found in URL');
+
+			try {
+				const result = await verifyEmailWithParams(id, hash, expires, signature);
+
+				if (result.success) {
+					console.log('✅ Email verification successful');
+					showSuccess = true;
+					errorMessage = 'Email успешно подтвержден!';
+
+					// Update auth state
+					await checkAuth();
+
+					// Redirect to dashboard after success
+					setTimeout(() => {
+						goto('/dashboard?verified=true');
+					}, 2000);
+				} else {
+					console.error('❌ Email verification failed:', result.message);
+					showError = true;
+					errorMessage = result.message || 'Ошибка верификации email';
+				}
+			} catch (error) {
+				console.error('❌ Email verification error:', error);
+				showError = true;
+				errorMessage = 'Произошла ошибка при верификации email';
+			}
+
+			return true; // URL had verification parameters
+		}
+
+		return false; // No verification parameters in URL
+	}
+
 	// Start initial cooldown
-	onMount(() => {
+	onMount(async () => {
+		// Check for email verification parameters first
+		const hasVerificationParams = await handleEmailVerificationFromUrl();
+
+		// If we're handling verification, skip other checks
+		if (hasVerificationParams) {
+			return;
+		}
+
 		// Check authentication and cookies
 		const sessionCookie = getLaravelSession();
 		const csrfToken = getCsrfToken();

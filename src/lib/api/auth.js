@@ -335,3 +335,45 @@ export function mapValidationErrors(errors) {
 
 	return mapped;
 }
+
+/**
+ * Verify email using verification URL parameters
+ * @param {string} id - User ID
+ * @param {string} hash - Verification hash
+ * @param {string} expires - Expiration timestamp
+ * @param {string} signature - URL signature
+ * @returns {Promise<Object>} - Verification result
+ */
+export async function verifyEmailWithParams(id, hash, expires, signature) {
+	try {
+		console.log('📧 Verifying email with parameters...');
+
+		const verificationUrl = `${API_CONFIG.baseUrl}/api/email/verify/${id}/${hash}`;
+		const url = new URL(verificationUrl);
+		url.searchParams.set('expires', expires);
+		url.searchParams.set('signature', signature);
+
+		const response = await fetch(url.toString(), {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			}
+		});
+
+		const result = await response.json();
+		console.log('📧 Email verification result:', result);
+
+		return {
+			success: result.success || false,
+			message: result.message || 'Ошибка верификации email',
+			user: result.data?.user || null
+		};
+	} catch (error) {
+		console.error('❌ Email verification error:', error);
+		return {
+			success: false,
+			message: 'Произошла ошибка при верификации email'
+		};
+	}
+}
