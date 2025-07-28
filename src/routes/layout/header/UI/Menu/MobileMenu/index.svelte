@@ -1,6 +1,7 @@
 <script>
 	import { visibleMobileMenu } from '$lib/state/visibleMobileMenu.svelte';
 	import { auth, logout } from '$lib/state/auth.svelte.js';
+	import { goto } from '$app/navigation';
 </script>
 
 {#if visibleMobileMenu.value}
@@ -76,6 +77,7 @@
 								onclick={async () => {
 									await logout();
 									visibleMobileMenu.value = false;
+									goto('/');
 								}}
 								class="-mx-3 block w-full rounded-lg px-3 py-2.5 text-left text-base/7 font-semibold text-white hover:bg-gray-800"
 							>

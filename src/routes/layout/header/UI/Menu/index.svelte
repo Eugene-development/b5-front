@@ -46,7 +46,10 @@
 		{#if auth.isAuthenticated}
 			<a href="/dashboard" class="mr-4 text-sm/6 font-normal text-white">Личный кабинет</a>
 			<button
-				onclick={logout}
+				onclick={async () => {
+					await logout();
+					// Redirect will be handled by logout function
+				}}
 				class="text-sm/6 font-normal text-white transition-colors hover:text-gray-300"
 			>
 				Выход

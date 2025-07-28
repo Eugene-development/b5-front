@@ -182,11 +182,11 @@ export async function logout() {
 		auth.emailVerified = false;
 
 		if (result.success) {
-			// Redirect to home page
-			if (typeof window !== 'undefined') {
-				window.location.href = '/';
-			}
-			console.log('✅ Logout successful');
+			// Redirect to home page using SvelteKit navigation
+			console.log('✅ Logout successful, redirecting to home');
+			// Import goto dynamically to avoid circular dependencies
+			const { goto } = await import('$app/navigation');
+			goto('/');
 			return true;
 		} else {
 			console.warn('⚠️ Logout API failed, but local state cleared:', result.message);
@@ -201,6 +201,9 @@ export async function logout() {
 		auth.isAuthenticated = false;
 		auth.emailVerified = false;
 		auth.error = null; // Don't show error for logout
+		// Import goto dynamically to avoid circular dependencies
+		const { goto } = await import('$app/navigation');
+		goto('/');
 		return true;
 	} finally {
 		auth.loading = false;

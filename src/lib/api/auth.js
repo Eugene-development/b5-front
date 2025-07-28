@@ -364,6 +364,26 @@ export async function verifyEmailWithParams(id, hash, expires, signature) {
 		const result = await response.json();
 		console.log('📧 Email verification result:', result);
 
+		// If verification was successful and we have user data, try to get a fresh token
+		if (result.success && result.data?.user) {
+			console.log('📧 Email verification successful, attempting to get fresh user data...');
+
+			// Try to get current user data to update auth state
+			try {
+				const userResult = await getCurrentUser();
+				if (userResult.success && userResult.user) {
+					console.log('📧 Successfully retrieved updated user data:', userResult.user);
+					return {
+						success: true,
+						message: result.message || 'Email успешно подтвержден',
+						user: userResult.user
+					};
+				}
+			} catch (userError) {
+				console.warn('📧 Could not get fresh user data, using verification response:', userError);
+			}
+		}
+
 		return {
 			success: result.success || false,
 			message: result.message || 'Ошибка верификации email',

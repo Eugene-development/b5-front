@@ -99,8 +99,23 @@
 					showSuccess = true;
 					errorMessage = 'Email успешно подтвержден!';
 
-					// Update auth state
-					await checkAuth();
+					// Update auth state with the user data from verification
+					if (result.user) {
+						console.log('📧 Updating auth state with verified user data:', result.user);
+						auth.user = {
+							id: result.user.id || 1,
+							name: result.user.name || result.user.email,
+							email: result.user.email,
+							city: result.user.city || '',
+							email_verified: result.user.email_verified || false,
+							email_verified_at: result.user.email_verified_at || null
+						};
+						auth.isAuthenticated = true;
+						auth.emailVerified = result.user.email_verified || false;
+					} else {
+						// Fallback to checkAuth if no user data in response
+						await checkAuth();
+					}
 
 					// Redirect to dashboard after success
 					setTimeout(() => {

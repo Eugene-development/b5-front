@@ -42,12 +42,15 @@
 			console.log('🔑 Logout result:', success);
 
 			if (success) {
-				console.log('✅ Logout successful, redirected by auth store');
+				console.log('✅ Logout successful, redirecting to home');
+				goto('/');
 			} else {
 				console.error('❌ Logout failed, but auth state cleared');
+				goto('/');
 			}
 		} catch (error) {
 			console.error('💥 Logout error:', error);
+			goto('/');
 		}
 	}
 </script>
@@ -152,7 +155,7 @@
 				</div>
 			</div>
 
-			{#if !auth.emailVerified}
+			{#if auth.isAuthenticated && !auth.emailVerified}
 				<div class="mt-6 rounded-md bg-yellow-500/10 p-4">
 					<div class="flex">
 						<svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
