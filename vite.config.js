@@ -67,18 +67,13 @@ export default defineConfig(({ mode }) => {
 
 		// Define global constants
 		define: {
-			// Replace console.log in production
-			...(isProd && {
-				'console.log': '(() => {})',
-				'console.warn': '(() => {})'
-				// Keep console.error for important errors
-			})
+			// Global constants can be defined here
 		},
 
 		// Performance and debugging
 		esbuild: {
-			// Remove console logs in production
-			drop: isProd ? ['console', 'debugger'] : [],
+			// Remove debugger statements in production
+			drop: isProd ? ['debugger'] : [],
 			// Keep function names for better stack traces
 			keepNames: true
 		},
