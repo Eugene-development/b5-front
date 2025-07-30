@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
+	import LoadingOverlay from '$lib/components/LoadingOverlay.svelte';
 
 	// Get redirectTo parameter from URL
 	let redirectTo = $derived.by(() => {
@@ -195,7 +196,7 @@
 						disabled={isLoading}
 						class="rounded-md bg-indigo-400 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-pink-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:opacity-70 disabled:hover:bg-indigo-400"
 					>
-						{isLoading ? 'Входим...' : 'Войти'}
+						Войти
 					</button>
 				</div>
 			</form>
@@ -211,3 +212,6 @@
 		</div>
 	</div>
 </div>
+
+<!-- Loading Overlay -->
+<LoadingOverlay show={isLoading} message="Входим в систему..." />

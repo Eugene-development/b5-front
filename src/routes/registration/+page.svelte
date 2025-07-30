@@ -1,6 +1,7 @@
 <script>
 	import { register, auth } from '$lib/state/auth.svelte.js';
 	import { goto } from '$app/navigation';
+	import LoadingOverlay from '$lib/components/LoadingOverlay.svelte';
 
 	// Import form data from server action
 	/** @type {import('./$types').PageProps} */
@@ -351,7 +352,7 @@
 							? 'bg-indigo-400 hover:bg-pink-400'
 							: 'cursor-not-allowed bg-gray-600'}"
 					>
-						{auth.loading ? 'Регистрация...' : 'Зарегистрироваться'}
+						Зарегистрироваться
 					</button>
 				</div>
 			</form>
@@ -367,6 +368,9 @@
 		</div>
 	</div>
 </div>
+
+<!-- Loading Overlay -->
+<LoadingOverlay show={auth.loading} message="Регистрация..." />
 
 <style>
 	.glass-card {

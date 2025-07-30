@@ -59,13 +59,14 @@
 </header>
 
 <!-- Loading state during auth initialization -->
-{#if auth.loading}
+<!-- {#if auth.loading}
 	<div class="flex min-h-screen items-center justify-center">
-		<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
+		<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-red-500"></div>
 	</div>
 {:else}
 	{@render children()}
-{/if}
+{/if} -->
+{@render children()}
 
 <footer class="border-t border-gray-100 bg-gray-900 py-6">
 	<Component />

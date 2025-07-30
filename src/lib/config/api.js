@@ -19,15 +19,11 @@ export const API_CONFIG = {
 		register: '/api/auth/register',
 		login: '/api/auth/login',
 		logout: '/api/auth/logout',
-		logoutAll: '/api/auth/logout-all',
 		user: '/api/auth/user',
 
 		// Email verification
 		sendEmailVerification: '/api/email/verification-notification',
-		verifyEmail: '/api/email/verify',
-
-		// Profile
-		profile: '/api/profile'
+		verifyEmail: '/api/email/verify'
 	},
 
 	// Default headers for API requests
