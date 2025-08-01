@@ -363,9 +363,9 @@
 				<p class="block text-blue-400 transition-colors hover:text-blue-300">
 					📥 Проверить папку "Спам"
 				</p>
-				<a href="/dashboard" class="block text-blue-400 transition-colors hover:text-blue-300">
+				<!-- <a href="/dashboard" class="block text-blue-400 transition-colors hover:text-blue-300">
 					🏠 Вернуться в личный кабинет
-				</a>
+				</a> -->
 				<a
 					href="mailto:support@bonus5.com"
 					class="block text-blue-400 transition-colors hover:text-blue-300"
