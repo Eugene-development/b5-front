@@ -28,4 +28,7 @@ echo "  NODE_ENV: $NODE_ENV"
 
 # Start SvelteKit application
 echo "🌐 Starting SvelteKit application..."
+echo "📋 Command to execute: $@"
+
+# Execute the command with proper signal handling
 exec "$@" 

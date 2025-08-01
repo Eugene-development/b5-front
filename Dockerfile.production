@@ -34,6 +34,10 @@ RUN npm ci --only=production && npm cache clean --force
 # Copy built application
 COPY --from=build --chown=svelte:sveltegroup /app/build ./build
 
+# Copy and setup entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Switch to non-root user
 USER svelte
 
@@ -43,5 +47,5 @@ EXPOSE 9999
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
     CMD node --version || exit 1
 
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "build"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["dumb-init", "--", "node", "build"]
