@@ -2,7 +2,7 @@
 	<div class="mx-auto max-w-7xl px-6 lg:px-8">
 		<div class="mx-auto max-w-2xl lg:mx-0">
 			<h2 class="text-pretty text-4xl font-semibold tracking-widest text-white sm:text-6xl">
-				Проект BONUS5
+				О проекте BONUS5
 			</h2>
 			<p class="mt-6 text-lg/8 text-gray-300">Инновационная партнерская программа</p>
 		</div>

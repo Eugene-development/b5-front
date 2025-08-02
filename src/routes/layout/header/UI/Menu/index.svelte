@@ -38,7 +38,7 @@
 	<div class="hidden *:tracking-widest lg:flex lg:gap-x-12">
 		<a href="/" class="text-sm/6 font-normal text-white">Главная</a>
 		<!-- <a href="/oferta" class="text-sm/6 font-normal text-white">Оферта</a> -->
-		<a href="/project" class="text-sm/6 font-normal text-white">Проект</a>
+		<a href="/about" class="text-sm/6 font-normal text-white">О проекте</a>
 		<a href="/payments" class="text-sm/6 font-normal text-white">Выплаты</a>
 		<a href="/152fz" class="text-sm/6 font-normal text-white">152 ФЗ</a>
 	</div>
@@ -50,7 +50,7 @@
 					await logout();
 					// Redirect will be handled by logout function
 				}}
-				class="text-sm/6 font-normal text-white transition-colors hover:text-gray-300"
+				class="text-sm/6 font-normal text-white transition-colors hover:cursor-pointer hover:text-gray-300"
 			>
 				Выход
 			</button>

@@ -64,10 +64,10 @@
 							>Главная</a
 						>
 						<a
-							href="/project"
+							href="/about"
 							onclick={() => (visibleMobileMenu.value = false)}
 							class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-white hover:bg-gray-800"
-							>Проект</a
+							>О проекте</a
 						>
 						<a
 							href="/payments"

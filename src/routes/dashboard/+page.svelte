@@ -286,10 +286,10 @@
 		<!-- Action Buttons -->
 		<div class="flex flex-col justify-center gap-4 sm:flex-row">
 			<a
-				href="/project"
+				href="/about"
 				class="rounded-lg bg-indigo-500 px-6 py-3 text-center font-semibold text-white transition-colors hover:bg-indigo-600"
 			>
-				Перейти к проектам
+				О проекте
 			</a>
 
 			<button

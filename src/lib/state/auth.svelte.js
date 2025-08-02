@@ -111,7 +111,9 @@ export async function login(email, password, remember = false) {
 		auth.error = 'Произошла ошибка при входе';
 		return false;
 	} finally {
+		// Гарантированно сбрасываем loading состояние
 		auth.loading = false;
+		console.log('🔓 Login function completed, loading set to false');
 	}
 }
 
@@ -206,6 +208,7 @@ export async function logout() {
 		goto('/');
 		return true;
 	} finally {
+		// Гарантированно сбрасываем loading состояние
 		auth.loading = false;
 		console.log('🔓 Logout function completed');
 	}
@@ -280,7 +283,9 @@ export async function checkAuth() {
 		auth.error = null; // Don't show error for auth check
 		return false;
 	} finally {
+		// Гарантированно сбрасываем loading состояние
 		auth.loading = false;
+		console.log('🔍 checkAuth function completed, loading set to false');
 	}
 }
 

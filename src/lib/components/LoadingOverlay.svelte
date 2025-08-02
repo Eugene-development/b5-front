@@ -8,8 +8,19 @@
 		if (show) {
 			document.body.style.overflow = 'hidden';
 		} else {
+			// Более надежный сброс overflow
 			document.body.style.overflow = '';
+			document.documentElement.style.overflow = '';
 		}
+	});
+
+	// Дополнительная защита при размонтировании компонента
+	onMount(() => {
+		return () => {
+			// Гарантированно сбрасываем overflow при размонтировании
+			document.body.style.overflow = '';
+			document.documentElement.style.overflow = '';
+		};
 	});
 </script>
 
