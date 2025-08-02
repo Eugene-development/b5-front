@@ -68,6 +68,6 @@
 {/if} -->
 {@render children()}
 
-<footer class="border-t border-gray-100 bg-gray-900 py-6">
+<footer class=" bg-gray-900 py-6">
 	<Component />
 </footer>

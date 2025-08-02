@@ -11,7 +11,6 @@
 		</div>
 	</div>
 </div>
-
 <div class="mx-auto mt-12 max-w-7xl lg:border-b lg:border-t lg:border-gray-200">
 	<nav aria-label="Progress" class="mx-auto px-4 sm:px-6 lg:px-8">
 		<ol
