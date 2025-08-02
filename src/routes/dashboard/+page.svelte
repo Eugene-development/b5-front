@@ -185,7 +185,7 @@
 		</div>
 
 		<!-- Dashboard Actions -->
-		<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+		<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 			<!-- Profile Section -->
 			<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
 				<div class="mb-4 flex items-center">
@@ -206,6 +206,30 @@
 				</div>
 				<p class="mb-4 text-gray-300">Управление данными</p>
 				<button class="font-medium text-indigo-400 hover:text-indigo-300"> Редактировать → </button>
+			</div>
+
+			<!-- Projects Section -->
+			<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
+				<div class="mb-4 flex items-center">
+					<svg
+						class="mr-3 h-8 w-8 text-purple-400"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+						></path>
+					</svg>
+					<h3 class="text-xl font-semibold text-white">Проекты</h3>
+				</div>
+				<p class="mb-4 text-gray-300">Управление активными проектами</p>
+				<a href="/projects" class="font-medium text-purple-400 hover:text-purple-300">
+					Управлять →
+				</a>
 			</div>
 
 			<!-- Payments Section -->
