@@ -91,99 +91,6 @@
 			</p>
 		</div>
 
-		<!-- User Info Card -->
-		<div class="mb-8 rounded-lg bg-white/5 p-8 backdrop-blur-sm">
-			<h2 class="mb-6 text-2xl font-semibold tracking-wide text-white">
-				Информация о пользователе
-			</h2>
-
-			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<div>
-					<label for="user-name" class="mb-2 block text-sm font-medium text-gray-300"> Имя </label>
-					<div id="user-name" class="rounded-md bg-white/10 px-4 py-3 text-lg text-white">
-						{auth.user?.name || 'Не указано'}
-					</div>
-				</div>
-
-				<div>
-					<label for="user-email" class="mb-2 block text-sm font-medium text-gray-300">
-						Email
-					</label>
-					<div id="user-email" class="rounded-md bg-white/10 px-4 py-3 text-lg text-white">
-						{auth.user?.email || 'Не указано'}
-					</div>
-				</div>
-
-				<div>
-					<label for="user-city" class="mb-2 block text-sm font-medium text-gray-300">
-						Город
-					</label>
-					<div id="user-city" class="rounded-md bg-white/10 px-4 py-3 text-lg text-white">
-						{auth.user?.city || 'Не указано'}
-					</div>
-				</div>
-
-				<div>
-					<label for="email-status" class="mb-2 block text-sm font-medium text-gray-300">
-						Статус Email
-					</label>
-					<div id="email-status" class="rounded-md bg-white/10 px-4 py-3 text-lg text-white">
-						{#if auth.emailVerified}
-							<span class="inline-flex items-center text-green-400">
-								<svg class="mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-									<path
-										fill-rule="evenodd"
-										d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-										clip-rule="evenodd"
-									/>
-								</svg>
-								Подтвержден
-							</span>
-						{:else}
-							<span class="inline-flex items-center text-yellow-400">
-								<svg class="mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-									<path
-										fill-rule="evenodd"
-										d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-										clip-rule="evenodd"
-									/>
-								</svg>
-								Не подтвержден
-							</span>
-						{/if}
-					</div>
-				</div>
-			</div>
-
-			{#if auth.isAuthenticated && !auth.emailVerified}
-				<div class="mt-6 rounded-md bg-yellow-500/10 p-4">
-					<div class="flex">
-						<svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-							<path
-								fill-rule="evenodd"
-								d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-						<div class="ml-3">
-							<h3 class="text-sm font-medium text-yellow-400">Требуется подтверждение email</h3>
-							<div class="mt-2 text-sm text-yellow-300">
-								<p>Для доступа ко всем функциям подтвердите свой email адрес.</p>
-							</div>
-							<div class="mt-4">
-								<a
-									href="/email-verify"
-									class="rounded-md bg-yellow-500 px-3 py-2 text-sm font-medium text-black hover:bg-yellow-400"
-								>
-									Подтвердить email
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			{/if}
-		</div>
-
 		<!-- Dashboard Actions -->
 		<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 			<!-- Profile Section -->
@@ -204,8 +111,9 @@
 					</svg>
 					<h3 class="text-xl font-semibold text-white">Профиль</h3>
 				</div>
-				<!-- <p class="mb-4 text-gray-300">Управление данными</p> -->
-				<button class="font-medium text-indigo-400 hover:text-indigo-300"> Редактировать → </button>
+				<a href="/profile" class="font-medium text-indigo-400 hover:text-indigo-300">
+					Просмотреть →
+				</a>
 			</div>
 
 			<!-- Projects Section -->

@@ -11,6 +11,7 @@
  * @property {string} name - User name
  * @property {string} email - User email
  * @property {string} city - User city
+ * @property {string} key - User unique key (ULID)
  * @property {boolean} email_verified - Email verification status
  * @property {string|null} email_verified_at - Email verification timestamp
  */
@@ -84,6 +85,7 @@ export async function login(email, password, remember = false) {
 				name: result.user.name || result.user.email,
 				email: result.user.email,
 				city: result.user.city || '',
+				key: result.user.key || '',
 				email_verified: result.user.email_verified || false,
 				email_verified_at: result.user.email_verified_at || null
 			};
@@ -138,6 +140,7 @@ export async function register(userData) {
 				name: result.user.name || userData.firstName,
 				email: result.user.email || userData.email,
 				city: result.user.city || userData.city,
+				key: result.user.key || '',
 				email_verified: result.user.email_verified || false,
 				email_verified_at: result.user.email_verified_at || null
 			};
@@ -250,6 +253,7 @@ export async function checkAuth() {
 				name: result.user.name || result.user.email,
 				email: result.user.email,
 				city: result.user.city || '',
+				key: result.user.key || '',
 				email_verified: result.user.email_verified || false,
 				email_verified_at: result.user.email_verified_at || null
 			};
