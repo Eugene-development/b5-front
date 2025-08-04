@@ -10,7 +10,7 @@ import { hasAuthToken } from '$lib/config/api.js';
 /**
  * List of protected routes that require authentication
  */
-export const PROTECTED_ROUTES = ['/dashboard', '/profile', '/settings'];
+export const PROTECTED_ROUTES = ['/dashboard', '/profile', '/projects', '/finances', '/settings'];
 
 /**
  * List of auth routes that should redirect authenticated users
@@ -20,7 +20,13 @@ export const AUTH_ROUTES = ['/login', '/registration'];
 /**
  * Routes that require email verification
  */
-export const EMAIL_VERIFICATION_REQUIRED_ROUTES = ['/dashboard', '/profile', '/settings'];
+export const EMAIL_VERIFICATION_REQUIRED_ROUTES = [
+	'/dashboard',
+	'/profile',
+	'/projects',
+	'/finances',
+	'/settings'
+];
 
 /**
  * Check if current path is a protected route

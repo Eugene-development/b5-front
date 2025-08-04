@@ -10,6 +10,13 @@
 		}
 	}
 
+	// Handle backdrop keydown to close menu
+	function handleBackdropKeydown(event) {
+		if (event.key === 'Escape') {
+			visibleMobileMenu.value = false;
+		}
+	}
+
 	// Handle menu content click to prevent closing
 	function handleMenuClick(event) {
 		event.stopPropagation();
@@ -20,10 +27,21 @@
 	<!-- Mobile menu, show/hide based on menu open state. -->
 	<div class="lg:hidden" role="dialog" aria-modal="true">
 		<!-- Background backdrop, show/hide based on slide-over state. -->
-		<div class="fixed inset-0 z-10" onclick={handleBackdropClick}></div>
+		<div
+			class="fixed inset-0 z-10"
+			onclick={handleBackdropClick}
+			onkeydown={handleBackdropKeydown}
+			tabindex="0"
+			role="button"
+			aria-label="Close mobile menu"
+		></div>
 		<div
 			class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-gray-900 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-white/10"
 			onclick={handleMenuClick}
+			onkeydown={handleBackdropKeydown}
+			role="dialog"
+			aria-label="Mobile navigation menu"
+			tabindex="0"
 		>
 			<div class="flex items-center justify-between">
 				<!-- <a href="#" class="-m-1.5 p-1.5">
