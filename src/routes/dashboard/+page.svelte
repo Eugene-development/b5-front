@@ -185,7 +185,7 @@
 		</div>
 
 		<!-- Dashboard Actions -->
-		<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+		<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 			<!-- Profile Section -->
 			<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
 				<div class="mb-4 flex items-center">
@@ -204,7 +204,7 @@
 					</svg>
 					<h3 class="text-xl font-semibold text-white">Профиль</h3>
 				</div>
-				<p class="mb-4 text-gray-300">Управление данными</p>
+				<!-- <p class="mb-4 text-gray-300">Управление данными</p> -->
 				<button class="font-medium text-indigo-400 hover:text-indigo-300"> Редактировать → </button>
 			</div>
 
@@ -226,7 +226,7 @@
 					</svg>
 					<h3 class="text-xl font-semibold text-white">Проекты</h3>
 				</div>
-				<p class="mb-4 text-gray-300">Управление активными проектами</p>
+				<!-- <p class="mb-4 text-gray-300">Управление активными проектами</p> -->
 				<a href="/projects" class="font-medium text-purple-400 hover:text-purple-300">
 					Управлять →
 				</a>
@@ -250,14 +250,14 @@
 					</svg>
 					<h3 class="text-xl font-semibold text-white">Выплаты</h3>
 				</div>
-				<p class="mb-4 text-gray-300">История доходов и выплат</p>
+				<!-- <p class="mb-4 text-gray-300">История доходов и выплат</p> -->
 				<a href="/payments" class="font-medium text-green-400 hover:text-green-300">
 					Посмотреть →
 				</a>
 			</div>
 
 			<!-- Settings Section -->
-			<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
+			<!-- <div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
 				<div class="mb-4 flex items-center">
 					<svg
 						class="mr-3 h-8 w-8 text-gray-400"
@@ -282,12 +282,14 @@
 				</div>
 				<p class="mb-4 text-gray-300">Конфигурация аккаунта</p>
 				<button class="font-medium text-gray-400 hover:text-gray-300"> Настроить → </button>
-			</div>
+			</div> -->
 		</div>
 
 		<!-- Quick Stats -->
 		<div class="mb-8 rounded-lg bg-white/5 p-8 backdrop-blur-sm">
-			<h2 class="mb-6 text-2xl font-semibold tracking-wide text-white">Быстрая статистика</h2>
+			<h2 class="mb-6 text-center text-2xl font-semibold tracking-wide text-white">
+				Быстрая статистика
+			</h2>
 
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 				<div class="text-center">
@@ -296,8 +298,8 @@
 				</div>
 
 				<div class="text-center">
-					<div class="mb-2 text-3xl font-bold text-green-400">₽0</div>
-					<div class="text-gray-300">Общий доход</div>
+					<div class="mb-2 text-3xl font-bold text-green-400">0</div>
+					<div class="text-gray-300">Закрытых проектов</div>
 				</div>
 
 				<div class="text-center">
@@ -309,12 +311,12 @@
 
 		<!-- Action Buttons -->
 		<div class="flex flex-col justify-center gap-4 sm:flex-row">
-			<a
+			<!-- <a
 				href="/about"
 				class="rounded-lg bg-indigo-500 px-6 py-3 text-center font-semibold text-white transition-colors hover:bg-indigo-600"
 			>
 				О проекте
-			</a>
+			</a> -->
 
 			<button
 				onclick={handleLogout}

@@ -11,7 +11,7 @@
 			<div class="mt-10 flex items-center justify-center gap-x-6">
 				<a
 					href="/registration"
-					class="font-barlow group relative inline-flex cursor-pointer justify-center overflow-hidden rounded-lg border-solid px-8 py-4 text-center text-base uppercase text-white outline-offset-4 transition-transform duration-300 ease-in-out focus:outline focus:outline-2 focus:outline-offset-4 focus:outline-white"
+					class="font-barlow group relative inline-flex cursor-pointer justify-center overflow-hidden rounded-lg border-solid px-8 py-4 text-center text-base uppercase text-white outline-offset-4 transition-transform duration-300 ease-in-out focus:outline focus:outline-offset-4 focus:outline-white"
 				>
 					<span class="relative z-20">Зарегистрироваться</span>
 

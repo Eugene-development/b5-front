@@ -23,18 +23,19 @@
 					<a href="/registration" class="group block">
 						<span
 							aria-hidden="true"
-							class="absolute left-0 top-0 h-full w-1 bg-transparent group-hover:bg-green-600 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
+							class="absolute left-0 top-0 h-full w-1 bg-transparent group-hover:bg-indigo-600 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
 						></span>
 						<span class="flex items-start px-6 py-5 text-sm font-medium">
 							<span class="shrink-0">
 								<span
-									class="flex size-10 items-center justify-center rounded-full bg-green-600 group-hover:bg-green-700"
+									class="flex size-10 items-center justify-center rounded-full bg-indigo-600 group-hover:bg-indigo-700"
 								>
 									<span class="text-lg font-bold text-white">1</span>
 								</span>
 							</span>
 							<span class="ml-4 mt-0.5 flex min-w-0 flex-col">
-								<span class="text-sm font-medium group-hover:text-green-600">Зарегистрируйтесь</span
+								<span class="text-sm font-medium group-hover:text-indigo-600"
+									>Зарегистрируйтесь</span
 								>
 								<span class="mt-1 text-sm font-medium text-gray-500"
 									>Пройдите простую регистрацию на нашей платформе</span
@@ -50,18 +51,18 @@
 					<div class="group" aria-current="step">
 						<span
 							aria-hidden="true"
-							class="absolute left-0 top-0 h-full w-1 bg-transparent group-hover:bg-green-600 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
+							class="absolute left-0 top-0 h-full w-1 bg-transparent group-hover:bg-indigo-600 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
 						></span>
 						<span class="flex items-start px-6 py-5 text-sm font-medium lg:pl-9">
 							<span class="shrink-0">
 								<span
-									class="flex size-10 items-center justify-center rounded-full border-2 border-green-500 group-hover:border-green-600"
+									class="flex size-10 items-center justify-center rounded-full border-2 border-indigo-500 group-hover:border-indigo-600"
 								>
-									<span class="text-gray-500 group-hover:text-green-600">2</span>
+									<span class="text-gray-500 group-hover:text-indigo-600">2</span>
 								</span>
 							</span>
 							<span class="ml-4 mt-0.5 flex min-w-0 flex-col">
-								<span class="text-sm font-medium group-hover:text-green-600"
+								<span class="text-sm font-medium group-hover:text-indigo-600"
 									>Получите инструкцию</span
 								>
 								<span class="mt-1 text-sm font-medium text-gray-500"
@@ -76,7 +77,7 @@
 							viewBox="0 0 12 82"
 							fill="none"
 							preserveAspectRatio="none"
-							class="size-full text-green-500"
+							class="size-full text-indigo-500"
 						>
 							<path
 								d="M0.5 0V31L10.5 41L0.5 51V82"
@@ -93,18 +94,18 @@
 					<div class="group">
 						<span
 							aria-hidden="true"
-							class="absolute left-0 top-0 h-full w-1 bg-transparent group-hover:bg-green-600 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
+							class="absolute left-0 top-0 h-full w-1 bg-transparent group-hover:bg-indigo-600 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
 						></span>
 						<span class="flex items-start px-6 py-5 text-sm font-medium lg:pl-9">
 							<span class="shrink-0">
 								<span
-									class="flex size-10 items-center justify-center rounded-full border-2 border-green-500 group-hover:border-green-600"
+									class="flex size-10 items-center justify-center rounded-full border-2 border-indigo-500 group-hover:border-indigo-600"
 								>
-									<span class="text-gray-500 group-hover:text-green-600">3</span>
+									<span class="text-gray-500 group-hover:text-indigo-600">3</span>
 								</span>
 							</span>
 							<span class="ml-4 mt-0.5 flex min-w-0 flex-col">
-								<span class="text-sm font-medium group-hover:text-green-600">Рекомендуйте</span>
+								<span class="text-sm font-medium group-hover:text-indigo-600">Рекомендуйте</span>
 								<span class="mt-1 text-sm font-medium text-gray-500"
 									>Отправляйте контакты заинтересованных клиентов.</span
 								>
@@ -117,7 +118,7 @@
 							viewBox="0 0 12 82"
 							fill="none"
 							preserveAspectRatio="none"
-							class="size-full text-green-500"
+							class="size-full text-indigo-500"
 						>
 							<path
 								d="M0.5 0V31L10.5 41L0.5 51V82"
@@ -134,18 +135,19 @@
 					<div class="group">
 						<span
 							aria-hidden="true"
-							class="absolute left-0 top-0 h-full w-1 bg-transparent group-hover:bg-green-600 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
+							class="absolute left-0 top-0 h-full w-1 bg-transparent group-hover:bg-indigo-600 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
 						></span>
 						<span class="flex items-start px-6 py-5 text-sm font-medium lg:pl-9">
 							<span class="shrink-0">
 								<span
-									class="flex size-10 items-center justify-center rounded-full border-2 border-green-500 group-hover:border-green-600"
+									class="flex size-10 items-center justify-center rounded-full border-2 border-indigo-500 group-hover:border-indigo-600"
 								>
-									<span class="text-gray-500 group-hover:text-green-600">4</span>
+									<span class="text-gray-500 group-hover:text-indigo-600">4</span>
 								</span>
 							</span>
 							<span class="ml-4 mt-0.5 flex min-w-0 flex-col">
-								<span class="text-sm font-medium group-hover:text-green-600">Получайте бонусы</span>
+								<span class="text-sm font-medium group-hover:text-indigo-600">Получайте бонусы</span
+								>
 								<span class="mt-1 text-sm font-medium text-gray-500"
 									>После закрытия сделки получайте положенные вам бонусы.</span
 								>
@@ -158,7 +160,7 @@
 							viewBox="0 0 12 82"
 							fill="none"
 							preserveAspectRatio="none"
-							class="size-full text-green-500"
+							class="size-full text-indigo-500"
 						>
 							<path
 								d="M0.5 0V31L10.5 41L0.5 51V82"

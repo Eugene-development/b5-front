@@ -2,7 +2,7 @@
 	<div class="mx-auto max-w-7xl px-6 lg:px-8">
 		<div class="mx-auto max-w-2xl lg:mx-0">
 			<h2 class="text-pretty text-4xl font-semibold tracking-widest text-white sm:text-6xl">
-				О проекте BONUS5
+				Проект BONUS5
 			</h2>
 			<p class="mt-6 text-lg/8 text-gray-300">Инновационная партнерская программа</p>
 		</div>
@@ -139,7 +139,7 @@
 				<div class="mt-8">
 					<a
 						href="/registration"
-						class="rounded-md bg-indigo-400 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-pink-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+						class="rounded-md bg-indigo-400 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-pink-400 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
 						>Зарегистрироваться</a
 					>
 				</div>

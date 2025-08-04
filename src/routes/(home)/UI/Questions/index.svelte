@@ -58,6 +58,17 @@
 					</p>
 				</dd>
 			</div>
+			<div class="py-8 first:pt-0 last:pb-0 lg:grid lg:grid-cols-12 lg:gap-8">
+				<dt class="text-base/7 font-semibold text-gray-900 lg:col-span-5">
+					Где гарантии, что я получу бонусы?
+				</dt>
+				<dd class="mt-4 lg:col-span-7 lg:mt-0">
+					<p class="text-base/7 text-gray-600">
+						Мы гарантируем выплату бонусов в течение 5 дней после закрытия сделки. Более того, мы
+						заинтересованы делать выплаты, так как это мотивирует вас на постоянную работу.
+					</p>
+				</dd>
+			</div>
 
 			<!-- More questions... -->
 		</dl>
