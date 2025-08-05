@@ -222,7 +222,7 @@
 				<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
 					<div class="mb-4 flex items-center">
 						<svg
-							class="mr-3 h-8 w-8 text-green-400"
+							class="mr-3 h-8 w-8 text-blue-400"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -236,7 +236,7 @@
 						</svg>
 						<h3 class="text-xl font-semibold text-white">Общий доход</h3>
 					</div>
-					<div class="text-3xl font-bold text-green-400">
+					<div class="text-3xl font-bold text-blue-400">
 						{formatCurrency(financialData.totalEarnings)}
 					</div>
 				</div>
@@ -245,7 +245,7 @@
 				<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
 					<div class="mb-4 flex items-center">
 						<svg
-							class="mr-3 h-8 w-8 text-blue-400"
+							class="mr-3 h-8 w-8 text-green-400"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -259,7 +259,7 @@
 						</svg>
 						<h3 class="text-xl font-semibold text-white">Выплачено</h3>
 					</div>
-					<div class="text-3xl font-bold text-blue-400">
+					<div class="text-3xl font-bold text-green-400">
 						{formatCurrency(financialData.totalPayments)}
 					</div>
 				</div>
@@ -376,7 +376,7 @@
 			</div>
 
 			<!-- Navigation Actions -->
-			<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+			<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-1 lg:grid-cols-3">
 				<!-- Dashboard Section -->
 				<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
 					<div class="mb-4 flex items-center">
@@ -453,7 +453,7 @@
 				</div>
 
 				<!-- Reports Section -->
-				<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
+				<!-- <div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
 					<div class="mb-4 flex items-center">
 						<svg
 							class="mr-3 h-8 w-8 text-green-400"
@@ -471,7 +471,7 @@
 						<h3 class="text-xl font-semibold text-white">Отчёты</h3>
 					</div>
 					<button class="font-medium text-green-400 hover:text-green-300"> Скачать → </button>
-				</div>
+				</div> -->
 			</div>
 
 			<!-- Action Buttons -->

@@ -333,7 +333,7 @@
 			</div>
 
 			<!-- Navigation Actions -->
-			<div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+			<div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-1 lg:grid-cols-3">
 				<!-- Dashboard Section -->
 				<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
 					<div class="mb-4 flex items-center">
@@ -410,7 +410,7 @@
 				</div>
 
 				<!-- Reports Section -->
-				<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
+				<!-- <div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
 					<div class="mb-4 flex items-center">
 						<svg
 							class="mr-3 h-8 w-8 text-purple-400"
@@ -428,7 +428,7 @@
 						<h3 class="text-xl font-semibold text-white">Отчёты</h3>
 					</div>
 					<button class="font-medium text-purple-400 hover:text-purple-300"> Скачать → </button>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>
