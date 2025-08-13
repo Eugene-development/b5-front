@@ -9,7 +9,7 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { getLaravelSession, getCsrfToken } from '$lib/config/api.js';
+	import { getLaravelSession, getCsrfToken, hasAuthToken } from '$lib/config/api.js';
 
 	let cooldownTime = $state(0);
 	let isResending = $state(false);
@@ -107,11 +107,16 @@
 							name: result.user.name || result.user.email,
 							email: result.user.email,
 							city: result.user.city || '',
+							key: result.user.key || '',
 							email_verified: result.user.email_verified || false,
 							email_verified_at: result.user.email_verified_at || null
 						};
 						auth.isAuthenticated = true;
 						auth.emailVerified = result.user.email_verified || false;
+						// Ensure fresh authoritative user data (including key) from API when token exists
+						if (hasAuthToken()) {
+							await checkAuth();
+						}
 					} else {
 						// Fallback to checkAuth if no user data in response
 						await checkAuth();

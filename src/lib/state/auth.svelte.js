@@ -135,19 +135,31 @@ export async function register(userData) {
 		const result = await registerUser(userData);
 
 		if (result.success) {
-			auth.user = {
-				id: result.user.id || 1,
-				name: result.user.name || userData.firstName,
-				email: result.user.email || userData.email,
-				city: result.user.city || userData.city,
-				key: result.user.key || '',
-				email_verified: result.user.email_verified || false,
-				email_verified_at: result.user.email_verified_at || null
-			};
-
+			// Save token and mark as authenticated first
 			auth.token = result.token || null;
 			auth.isAuthenticated = true;
-			auth.emailVerified = result.user.email_verified || false;
+
+			// Immediately refresh user from API to ensure we have authoritative fields (including key)
+			try {
+				await checkAuth();
+			} catch (refreshError) {
+				console.warn(
+					'Could not refresh user after registration, using response user:',
+					refreshError
+				);
+				// Fallback to response mapping
+				auth.user = {
+					id: result.user.id || 1,
+					name: result.user.name || userData.firstName,
+					email: result.user.email || userData.email,
+					city: result.user.city || userData.city,
+					key: result.user.key || '',
+					email_verified: result.user.email_verified || false,
+					email_verified_at: result.user.email_verified_at || null
+				};
+				auth.emailVerified = result.user.email_verified || false;
+			}
+
 			return true;
 		} else {
 			auth.error = result.message || 'Ошибка регистрации';
