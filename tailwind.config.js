@@ -11,7 +11,5 @@ export default {
 			}
 		}
 	},
-	plugins: [
-		// Include TailwindCSS plugins
-	]
+	plugins: [require('tailwindcss-animated')]
 };
