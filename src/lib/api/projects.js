@@ -7,38 +7,21 @@ import { gql, request } from 'graphql-request';
 
 // GraphQL queries
 const PROJECTS_BY_AGENT_QUERY = gql`
-	query ProjectsByAgent($agent_id: ID!, $page: Int, $first: Int) {
-		projectsByAgent(agent_id: $agent_id, page: $page, first: $first) {
-			data {
-				id
-				value
-				agent_id
-				agent {
-					id
-					name
-					email
-				}
-				city
-				description
-				is_active
-				contract_name
-				contract_date
-				contract_amount
-				agent_percentage
-				planned_completion_date
-				created_at
-				updated_at
-			}
-			paginatorInfo {
-				count
-				currentPage
-				firstItem
-				hasMorePages
-				lastItem
-				lastPage
-				perPage
-				total
-			}
+	query ProjectsByAgent($user_id: ID!) {
+		projectsByAgent(user_id: $user_id) {
+			id
+			value
+			user_id
+			city
+			description
+			is_active
+			contract_name
+			contract_date
+			contract_amount
+			agent_percentage
+			planned_completion_date
+			created_at
+			updated_at
 		}
 	}
 `;
@@ -96,28 +79,34 @@ async function makeGraphQLRequest(
  * @returns {Promise<Object>} Projects data with pagination info
  */
 export async function fetchProjectsByAgent(params) {
-	const { agentId, page = 1, first = 10 } = params;
-	
+	// const { agentId, page = 1, first = 10 } = params;
+
+	const agentId = 38;
+	const page = 1;
+	const first = 10;
+
 	if (!agentId) {
 		throw new Error('Agent ID is required');
 	}
 
 	try {
-		const variables = { agent_id: String(agentId), first, page };
+		const variables = { user_id: String(agentId), first, page };
 		const result = await makeGraphQLRequest(
 			PROJECTS_BY_AGENT_QUERY,
 			variables,
 			'fetchProjectsByAgent'
 		);
-		
+
+		console.log('Projects loaded:', result);
+
 		return {
-			data: result.projectsByAgent?.data || [],
-			paginatorInfo: result.projectsByAgent?.paginatorInfo || {
-				currentPage: page,
-				lastPage: 1,
-				total: 0,
-				perPage: first
-			}
+			data: result.projectsByAgent?.data || []
+			// paginatorInfo: result.projectsByAgent?.paginatorInfo || {
+			// 	currentPage: page,
+			// 	lastPage: 1,
+			// 	total: 0,
+			// 	perPage: first
+			// }
 		};
 	} catch (err) {
 		console.error('Fetch projects by agent failed:', err);
@@ -126,25 +115,28 @@ export async function fetchProjectsByAgent(params) {
 }
 
 /**
- * Get all projects for a specific agent
+ * Get all projects for a specific agent (без пагинации)
  * @param {string|number} agentId - Agent ID
- * @param {number} [first=1000] - Number of items to fetch
- * @param {number} [page=1] - Page number
  * @returns {Promise<Array>} Array of projects
  */
-export async function getAllProjectsForAgent(agentId, first = 1000, page = 1) {
+export async function getAllProjectsForAgent(agentId) {
 	if (!agentId) {
 		throw new Error('Agent ID is required');
 	}
 
 	try {
-		const variables = { agent_id: String(agentId), first, page };
+		// Используем только user_id, так как GraphQL схема использует @all директиву
+		const variables = { user_id: String(agentId) };
 		const result = await makeGraphQLRequest(
 			PROJECTS_BY_AGENT_QUERY,
 			variables,
 			'getAllProjectsForAgent'
 		);
-		return result.projectsByAgent?.data || [];
+
+		console.log('All projects loaded:', result);
+
+		// Возвращаем только массив проектов, без информации о пагинации
+		return result.projectsByAgent || [];
 	} catch (err) {
 		console.error('Get all projects for agent failed:', err);
 		throw err;
@@ -164,7 +156,7 @@ export async function refreshProjectsForAgent(agentId, first = 10, page = 1) {
 	}
 
 	try {
-		const variables = { agent_id: String(agentId), first, page };
+		const variables = { user_id: String(agentId), first, page };
 		const result = await makeGraphQLRequest(
 			PROJECTS_BY_AGENT_QUERY,
 			variables,
@@ -190,7 +182,7 @@ export async function getProjectsForAgentWithPagination(agentId, first = 10, pag
 	}
 
 	try {
-		const variables = { agent_id: String(agentId), first, page };
+		const variables = { user_id: String(agentId), first, page };
 		const result = await makeGraphQLRequest(
 			PROJECTS_BY_AGENT_QUERY,
 			variables,

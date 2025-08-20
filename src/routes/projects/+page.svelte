@@ -2,38 +2,17 @@
 	import { auth } from '$lib/state/auth.svelte.js';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { fetchProjectsByAgent } from '$lib/api/projects.js';
 
 	/** @type {import('./$types').PageData} */
 	let { data } = $props();
 
-	// State
-	let projects = $state([]);
-	let loading = $state(true);
-	let error = $state(null);
-	let retryCount = $state(0);
+	// Get projects from server-side data
+	let projects = $state(data.projects || []);
+	let error = $state(data.error || null);
 
-	// Pagination from server-side load
-	let currentPage = $state(data.pagination.currentPage);
-	let perPage = $state(data.pagination.perPage);
-	let total = $state(0);
-	let lastPage = $state(1);
-
-	// Update pagination when data changes (for navigation)
-	$effect(() => {
-		currentPage = data.pagination.currentPage;
-		perPage = data.pagination.perPage;
-	});
-
-	// Load projects on mount
-	onMount(async () => {
-		// Check authentication first
-		if (!checkAuthentication()) {
-			return; // Exit early if not authenticated
-		}
-
-		// Load projects if authenticated
-		await loadProjects();
+	// Check authentication on mount
+	onMount(() => {
+		checkAuthentication();
 	});
 
 	// Check if user is authenticated
@@ -51,82 +30,15 @@
 		return true;
 	}
 
-	// Load projects from GraphQL API
-	async function loadProjects(pageNum = currentPage, isRetry = false) {
-		// Check authentication before loading projects
-		if (!auth.isAuthenticated || !auth.user?.id) {
-			console.error('User not authenticated or missing user ID');
-			error = 'Необходима авторизация для просмотра проектов';
-			loading = false;
-			return;
-		}
-
-		try {
-			loading = true;
-			error = null;
-
-			// Track retry attempts
-			if (isRetry) {
-				retryCount++;
-			} else {
-				retryCount = 0;
-			}
-
-			const result = await fetchProjectsByAgent({
-				agentId: auth.user.id,
-				page: pageNum,
-				first: perPage
-			});
-			console.log('Projects loaded:', result);
-
-			projects = result.data || [];
-			currentPage = result.paginatorInfo.currentPage || pageNum;
-			lastPage = result.paginatorInfo.lastPage || 1;
-			total = result.paginatorInfo.total || projects.length;
-			perPage = result.paginatorInfo.perPage || perPage;
-
-			// Reset retry count on successful load
-			retryCount = 0;
-		} catch (err) {
-			console.error('Failed to load projects (GraphQL):', err);
-
-			// Handle different types of errors with specific messages
-			if (err.response?.status === 401 || err.response?.status === 403) {
-				error = 'Ошибка авторизации. Пожалуйста, войдите в систему заново.';
-				// Redirect to login on auth errors
-				goto('/login?redirectTo=/projects');
-			} else if (err.response?.status === 404) {
-				error = 'Сервис временно недоступен. Попробуйте позже.';
-			} else if (err.response?.status >= 500) {
-				error = 'Ошибка сервера. Попробуйте повторить запрос.';
-			} else if (err.name === 'AbortError' || err.message?.includes('timeout')) {
-				error = 'Превышено время ожидания. Проверьте подключение к интернету.';
-			} else if (err.message?.includes('Network')) {
-				error = 'Ошибка сети. Проверьте подключение к интернету.';
-			} else {
-				error = `Не удалось загрузить проекты. ${retryCount > 0 ? `Попытка ${retryCount + 1}.` : 'Попробуйте еще раз.'}`;
-			}
-		} finally {
-			loading = false;
-		}
-	}
-
-	// Retry function with enhanced feedback
-	async function retryLoadProjects() {
-		if (loading) return; // Prevent multiple simultaneous requests
-		await loadProjects(currentPage, true);
-	}
-
-	// Navigate to a specific page
-	function navigateToPage(pageNum) {
-		if (pageNum < 1 || pageNum > lastPage || loading) return;
-		loadProjects(pageNum);
-	}
-
 	function getStatusBadge(is_active) {
 		return is_active
 			? 'bg-green-500/20 text-green-400 border-green-500/30'
 			: 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+	}
+
+	// Function to refresh the page (reload from server)
+	function refreshProjects() {
+		window.location.reload();
 	}
 </script>
 
@@ -177,29 +89,18 @@
 								/>
 							</svg>
 							<div>
-								<p class="text-sm font-medium text-red-300">{error}</p>
-								{#if retryCount > 0}
-									<p class="mt-1 text-xs text-red-400">Попыток повтора: {retryCount}</p>
-								{/if}
+								<p class="text-sm font-medium text-red-300">{error.message || error}</p>
 							</div>
 						</div>
 						<div class="flex flex-col gap-2 sm:flex-row">
-							<button
-								class="rounded bg-red-500/20 px-3 py-1 text-sm text-red-300 transition-colors hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-50"
-								onclick={retryLoadProjects}
-								disabled={loading}
-							>
-								{#if loading}
-									<div class="flex items-center">
-										<div
-											class="mr-2 h-3 w-3 animate-spin rounded-full border border-red-300 border-t-transparent"
-										></div>
-										Загрузка...
-									</div>
-								{:else}
+							{#if error.canRetry}
+								<button
+									class="rounded bg-red-500/20 px-3 py-1 text-sm text-red-300 transition-colors hover:bg-red-500/30"
+									onclick={refreshProjects}
+								>
 									Повторить
-								{/if}
-							</button>
+								</button>
+							{/if}
 							<button
 								class="rounded bg-gray-500/20 px-3 py-1 text-sm text-gray-300 transition-colors hover:bg-gray-500/30"
 								onclick={() => {
@@ -217,47 +118,28 @@
 				<div class="mb-4 flex items-center justify-between">
 					<h2 class="text-xl font-semibold text-white">Список проектов</h2>
 					<div class="flex items-center gap-4">
-						<div class="text-sm text-gray-300">Всего: {total}</div>
+						<div class="text-sm text-gray-300">Всего: {projects.length}</div>
 						<button
-							class="rounded bg-indigo-500/20 px-3 py-1 text-sm text-indigo-300 transition-colors hover:bg-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-50"
-							onclick={retryLoadProjects}
-							disabled={loading}
+							class="rounded bg-indigo-500/20 px-3 py-1 text-sm text-indigo-300 transition-colors hover:bg-indigo-500/30"
+							onclick={refreshProjects}
 							title="Обновить список проектов"
 						>
-							{#if loading}
-								<div class="flex items-center">
-									<div
-										class="mr-2 h-3 w-3 animate-spin rounded-full border border-indigo-300 border-t-transparent"
-									></div>
-									Обновление...
-								</div>
-							{:else}
-								<div class="flex items-center">
-									<svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-										/>
-									</svg>
-									Обновить
-								</div>
-							{/if}
+							<div class="flex items-center">
+								<svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+									/>
+								</svg>
+								Обновить
+							</div>
 						</button>
 					</div>
 				</div>
 
-				{#if loading}
-					<div class="flex flex-col items-center justify-center py-12">
-						<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-indigo-400"></div>
-						<p class="mt-4 text-sm text-gray-400">
-							{retryCount > 0
-								? `Повторная попытка загрузки... (${retryCount})`
-								: 'Загрузка проектов...'}
-						</p>
-					</div>
-				{:else if projects.length === 0 && !error}
+				{#if projects.length === 0 && !error}
 					<div class="py-12 text-center">
 						<svg
 							class="mx-auto h-12 w-12 text-gray-500"
@@ -279,25 +161,13 @@
 						</p>
 						<button
 							class="mt-4 rounded bg-indigo-500/20 px-4 py-2 text-sm text-indigo-300 transition-colors hover:bg-indigo-500/30"
-							onclick={retryLoadProjects}
+							onclick={refreshProjects}
 						>
 							Обновить список
 						</button>
 					</div>
 				{:else}
 					<div class="relative overflow-x-auto">
-						{#if loading && projects.length > 0}
-							<div
-								class="absolute inset-0 z-10 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm"
-							>
-								<div class="flex items-center rounded-lg bg-gray-800/90 px-4 py-2">
-									<div
-										class="mr-3 h-4 w-4 animate-spin rounded-full border border-indigo-400 border-t-transparent"
-									></div>
-									<span class="text-sm text-gray-300">Обновление данных...</span>
-								</div>
-							</div>
-						{/if}
 						<table class="min-w-full divide-y divide-gray-700">
 							<thead>
 								<tr class="text-left text-xs uppercase tracking-wider text-gray-400">
@@ -312,7 +182,7 @@
 							</thead>
 							<tbody class="divide-y divide-gray-800">
 								{#each projects as p}
-									<tr class="text-sm text-gray-200 {loading ? 'opacity-75' : ''}">
+									<tr class="text-sm text-gray-200">
 										<td class="px-4 py-3">{p.id}</td>
 										<td class="px-4 py-3">{p.value || '-'}</td>
 										<td class="px-4 py-3">{p.city || '-'}</td>
@@ -330,48 +200,6 @@
 								{/each}
 							</tbody>
 						</table>
-					</div>
-
-					<!-- Pagination -->
-					<div class="mt-6 flex items-center justify-between">
-						<button
-							class="rounded bg-white/10 px-3 py-2 text-sm text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
-							onclick={() => navigateToPage(currentPage - 1)}
-							disabled={currentPage <= 1 || loading}
-						>
-							{#if loading && currentPage > 1}
-								<div class="flex items-center">
-									<div
-										class="mr-2 h-3 w-3 animate-spin rounded-full border border-white border-t-transparent"
-									></div>
-									Назад
-								</div>
-							{:else}
-								Назад
-							{/if}
-						</button>
-						<div class="text-sm text-gray-300">
-							Страница {currentPage} из {lastPage}
-							{#if total > 0}
-								<span class="text-gray-400"> • Всего: {total}</span>
-							{/if}
-						</div>
-						<button
-							class="rounded bg-white/10 px-3 py-2 text-sm text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
-							onclick={() => navigateToPage(currentPage + 1)}
-							disabled={currentPage >= lastPage || loading}
-						>
-							{#if loading && currentPage < lastPage}
-								<div class="flex items-center">
-									Вперёд
-									<div
-										class="ml-2 h-3 w-3 animate-spin rounded-full border border-white border-t-transparent"
-									></div>
-								</div>
-							{:else}
-								Вперёд
-							{/if}
-						</button>
 					</div>
 				{/if}
 			</div>
