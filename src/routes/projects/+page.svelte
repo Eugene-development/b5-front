@@ -2,22 +2,37 @@
 	import { auth } from '$lib/state/auth.svelte.js';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { fetchProjectsByAgent } from '$lib/api/graphql/projects.js';
+	import { fetchProjectsByAgent } from '$lib/api/projects.js';
+
+	/** @type {import('./$types').PageData} */
+	let { data } = $props();
 
 	// State
 	let projects = $state([]);
 	let loading = $state(true);
 	let error = $state(null);
+	let retryCount = $state(0);
 
-	// Pagination
-	let currentPage = $state(1);
-	let perPage = $state(10);
+	// Pagination from server-side load
+	let currentPage = $state(data.pagination.currentPage);
+	let perPage = $state(data.pagination.perPage);
 	let total = $state(0);
 	let lastPage = $state(1);
 
+	// Update pagination when data changes (for navigation)
+	$effect(() => {
+		currentPage = data.pagination.currentPage;
+		perPage = data.pagination.perPage;
+	});
+
 	// Load projects on mount
 	onMount(async () => {
-		checkAuthentication();
+		// Check authentication first
+		if (!checkAuthentication()) {
+			return; // Exit early if not authenticated
+		}
+
+		// Load projects if authenticated
 		await loadProjects();
 	});
 
@@ -25,32 +40,87 @@
 	function checkAuthentication() {
 		if (!auth.isAuthenticated) {
 			goto('/login?redirectTo=/projects');
-			return;
+			return false;
 		}
 
 		if (!auth.emailVerified) {
 			goto('/email-verify');
-			return;
+			return false;
 		}
+
+		return true;
 	}
 
 	// Load projects from GraphQL API
-	async function loadProjects(page = currentPage) {
+	async function loadProjects(pageNum = currentPage, isRetry = false) {
+		// Check authentication before loading projects
+		if (!auth.isAuthenticated || !auth.user?.id) {
+			console.error('User not authenticated or missing user ID');
+			error = 'Необходима авторизация для просмотра проектов';
+			loading = false;
+			return;
+		}
+
 		try {
 			loading = true;
 			error = null;
-			const result = await fetchProjectsByAgent({ agentId: auth.user?.id, page, first: perPage });
+
+			// Track retry attempts
+			if (isRetry) {
+				retryCount++;
+			} else {
+				retryCount = 0;
+			}
+
+			const result = await fetchProjectsByAgent({
+				agentId: auth.user.id,
+				page: pageNum,
+				first: perPage
+			});
+			console.log('Projects loaded:', result);
+
 			projects = result.data || [];
-			currentPage = result.paginatorInfo.currentPage || page;
+			currentPage = result.paginatorInfo.currentPage || pageNum;
 			lastPage = result.paginatorInfo.lastPage || 1;
 			total = result.paginatorInfo.total || projects.length;
 			perPage = result.paginatorInfo.perPage || perPage;
+
+			// Reset retry count on successful load
+			retryCount = 0;
 		} catch (err) {
 			console.error('Failed to load projects (GraphQL):', err);
-			error = 'Не удалось загрузить проекты';
+
+			// Handle different types of errors with specific messages
+			if (err.response?.status === 401 || err.response?.status === 403) {
+				error = 'Ошибка авторизации. Пожалуйста, войдите в систему заново.';
+				// Redirect to login on auth errors
+				goto('/login?redirectTo=/projects');
+			} else if (err.response?.status === 404) {
+				error = 'Сервис временно недоступен. Попробуйте позже.';
+			} else if (err.response?.status >= 500) {
+				error = 'Ошибка сервера. Попробуйте повторить запрос.';
+			} else if (err.name === 'AbortError' || err.message?.includes('timeout')) {
+				error = 'Превышено время ожидания. Проверьте подключение к интернету.';
+			} else if (err.message?.includes('Network')) {
+				error = 'Ошибка сети. Проверьте подключение к интернету.';
+			} else {
+				error = `Не удалось загрузить проекты. ${retryCount > 0 ? `Попытка ${retryCount + 1}.` : 'Попробуйте еще раз.'}`;
+			}
 		} finally {
 			loading = false;
 		}
+	}
+
+	// Retry function with enhanced feedback
+	async function retryLoadProjects() {
+		if (loading) return; // Prevent multiple simultaneous requests
+		await loadProjects(currentPage, true);
+	}
+
+	// Navigate to a specific page
+	function navigateToPage(pageNum) {
+		if (pageNum < 1 || pageNum > lastPage || loading) return;
+		loadProjects(pageNum);
 	}
 
 	function getStatusBadge(is_active) {
@@ -91,9 +161,106 @@
 
 			{#if error}
 				<div class="mb-8 rounded-lg border border-red-500/30 bg-red-500/20 p-4 backdrop-blur-sm">
-					<div class="flex items-center">
+					<div class="flex items-start justify-between">
+						<div class="flex items-start">
+							<svg
+								class="mr-3 mt-0.5 h-6 w-6 flex-shrink-0 text-red-400"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+								/>
+							</svg>
+							<div>
+								<p class="text-sm font-medium text-red-300">{error}</p>
+								{#if retryCount > 0}
+									<p class="mt-1 text-xs text-red-400">Попыток повтора: {retryCount}</p>
+								{/if}
+							</div>
+						</div>
+						<div class="flex flex-col gap-2 sm:flex-row">
+							<button
+								class="rounded bg-red-500/20 px-3 py-1 text-sm text-red-300 transition-colors hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-50"
+								onclick={retryLoadProjects}
+								disabled={loading}
+							>
+								{#if loading}
+									<div class="flex items-center">
+										<div
+											class="mr-2 h-3 w-3 animate-spin rounded-full border border-red-300 border-t-transparent"
+										></div>
+										Загрузка...
+									</div>
+								{:else}
+									Повторить
+								{/if}
+							</button>
+							<button
+								class="rounded bg-gray-500/20 px-3 py-1 text-sm text-gray-300 transition-colors hover:bg-gray-500/30"
+								onclick={() => {
+									error = null;
+								}}
+							>
+								Скрыть
+							</button>
+						</div>
+					</div>
+				</div>
+			{/if}
+
+			<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
+				<div class="mb-4 flex items-center justify-between">
+					<h2 class="text-xl font-semibold text-white">Список проектов</h2>
+					<div class="flex items-center gap-4">
+						<div class="text-sm text-gray-300">Всего: {total}</div>
+						<button
+							class="rounded bg-indigo-500/20 px-3 py-1 text-sm text-indigo-300 transition-colors hover:bg-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-50"
+							onclick={retryLoadProjects}
+							disabled={loading}
+							title="Обновить список проектов"
+						>
+							{#if loading}
+								<div class="flex items-center">
+									<div
+										class="mr-2 h-3 w-3 animate-spin rounded-full border border-indigo-300 border-t-transparent"
+									></div>
+									Обновление...
+								</div>
+							{:else}
+								<div class="flex items-center">
+									<svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+										/>
+									</svg>
+									Обновить
+								</div>
+							{/if}
+						</button>
+					</div>
+				</div>
+
+				{#if loading}
+					<div class="flex flex-col items-center justify-center py-12">
+						<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-indigo-400"></div>
+						<p class="mt-4 text-sm text-gray-400">
+							{retryCount > 0
+								? `Повторная попытка загрузки... (${retryCount})`
+								: 'Загрузка проектов...'}
+						</p>
+					</div>
+				{:else if projects.length === 0 && !error}
+					<div class="py-12 text-center">
 						<svg
-							class="mr-3 h-6 w-6 text-red-400"
+							class="mx-auto h-12 w-12 text-gray-500"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -102,28 +269,35 @@
 								stroke-linecap="round"
 								stroke-linejoin="round"
 								stroke-width="2"
-								d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+								d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
 							/>
 						</svg>
-						<p class="text-sm font-medium text-red-300">{error}</p>
+						<h3 class="mt-4 text-lg font-medium text-gray-300">Проекты не найдены</h3>
+						<p class="mt-2 text-sm text-gray-400">
+							У вас пока нет назначенных проектов. Обратитесь к администратору для получения доступа
+							к проектам.
+						</p>
+						<button
+							class="mt-4 rounded bg-indigo-500/20 px-4 py-2 text-sm text-indigo-300 transition-colors hover:bg-indigo-500/30"
+							onclick={retryLoadProjects}
+						>
+							Обновить список
+						</button>
 					</div>
-				</div>
-			{/if}
-
-			<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
-				<div class="mb-4 flex items-center justify-between">
-					<h2 class="text-xl font-semibold text-white">Список проектов</h2>
-					<div class="text-sm text-gray-300">Всего: {total}</div>
-				</div>
-
-				{#if loading}
-					<div class="flex items-center justify-center py-12">
-						<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-indigo-400"></div>
-					</div>
-				{:else if projects.length === 0}
-					<div class="py-12 text-center text-gray-300">Проекты не найдены</div>
 				{:else}
-					<div class="overflow-x-auto">
+					<div class="relative overflow-x-auto">
+						{#if loading && projects.length > 0}
+							<div
+								class="absolute inset-0 z-10 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm"
+							>
+								<div class="flex items-center rounded-lg bg-gray-800/90 px-4 py-2">
+									<div
+										class="mr-3 h-4 w-4 animate-spin rounded-full border border-indigo-400 border-t-transparent"
+									></div>
+									<span class="text-sm text-gray-300">Обновление данных...</span>
+								</div>
+							</div>
+						{/if}
 						<table class="min-w-full divide-y divide-gray-700">
 							<thead>
 								<tr class="text-left text-xs uppercase tracking-wider text-gray-400">
@@ -138,7 +312,7 @@
 							</thead>
 							<tbody class="divide-y divide-gray-800">
 								{#each projects as p}
-									<tr class="text-sm text-gray-200">
+									<tr class="text-sm text-gray-200 {loading ? 'opacity-75' : ''}">
 										<td class="px-4 py-3">{p.id}</td>
 										<td class="px-4 py-3">{p.value || '-'}</td>
 										<td class="px-4 py-3">{p.city || '-'}</td>
@@ -161,21 +335,42 @@
 					<!-- Pagination -->
 					<div class="mt-6 flex items-center justify-between">
 						<button
-							class="rounded bg-white/10 px-3 py-2 text-sm text-white disabled:opacity-40"
-							on:click={() => loadProjects(currentPage - 1)}
-							disabled={currentPage <= 1}
+							class="rounded bg-white/10 px-3 py-2 text-sm text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+							onclick={() => navigateToPage(currentPage - 1)}
+							disabled={currentPage <= 1 || loading}
 						>
-							Назад
+							{#if loading && currentPage > 1}
+								<div class="flex items-center">
+									<div
+										class="mr-2 h-3 w-3 animate-spin rounded-full border border-white border-t-transparent"
+									></div>
+									Назад
+								</div>
+							{:else}
+								Назад
+							{/if}
 						</button>
 						<div class="text-sm text-gray-300">
 							Страница {currentPage} из {lastPage}
+							{#if total > 0}
+								<span class="text-gray-400"> • Всего: {total}</span>
+							{/if}
 						</div>
 						<button
-							class="rounded bg-white/10 px-3 py-2 text-sm text-white disabled:opacity-40"
-							on:click={() => loadProjects(currentPage + 1)}
-							disabled={currentPage >= lastPage}
+							class="rounded bg-white/10 px-3 py-2 text-sm text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+							onclick={() => navigateToPage(currentPage + 1)}
+							disabled={currentPage >= lastPage || loading}
 						>
-							Вперёд
+							{#if loading && currentPage < lastPage}
+								<div class="flex items-center">
+									Вперёд
+									<div
+										class="ml-2 h-3 w-3 animate-spin rounded-full border border-white border-t-transparent"
+									></div>
+								</div>
+							{:else}
+								Вперёд
+							{/if}
 						</button>
 					</div>
 				{/if}
