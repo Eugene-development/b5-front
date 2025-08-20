@@ -1,38 +1,40 @@
-# sv
+# b5-front
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Frontend приложение для Bonus5 с интеграцией GraphQL API.
 
-## Creating a project
+## Настройка GraphQL API
 
-If you're seeing this, you've probably already done this step. Congrats!
+Для работы с GraphQL API необходимо настроить переменную окружения:
 
-```sh
-# create a new project in the current directory
-npx sv create
+```bash
+# Создайте .env файл в корне проекта
+VITE_B5_API_URL=https://api.bonus5.ru/graphql
 
-# create a new project in my-app
-npx sv create my-app
+# Для локальной разработки
+# VITE_B5_API_URL=http://localhost:8000/graphql
 ```
 
-## Developing
+**Важно:** Убедитесь, что URL указывает на GraphQL endpoint вашего b5-api2 бэкенда.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Разработка
+
+После создания проекта и установки зависимостей с `npm install`, запустите сервер разработки:
 
 ```sh
 npm run dev
 
-# or start the server and open the app in a new browser tab
+# или запустите сервер и откройте приложение в новой вкладке браузера
 npm run dev -- --open
 ```
 
-## Building
+## Сборка
 
-To create a production version of your app:
+Для создания production версии приложения:
 
 ```sh
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+Вы можете предварительно просмотреть production сборку с `npm run preview`.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+> Для развертывания приложения может потребоваться установить [адаптер](https://svelte.dev/docs/kit/adapters) для вашей целевой платформы.
