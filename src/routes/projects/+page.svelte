@@ -2,17 +2,23 @@
 	import { auth } from '$lib/state/auth.svelte.js';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { getAllProjectsForAgent } from '$lib/api/projects.js';
 
 	/** @type {import('./$types').PageData} */
 	let { data } = $props();
 
-	// Get projects from server-side data
-	let projects = $state(data.projects || []);
-	let error = $state(data.error || null);
+	// State for projects and loading
+	let projects = $state([]);
+	let error = $state(null);
+	let loading = $state(true);
 
-	// Check authentication on mount
-	onMount(() => {
-		checkAuthentication();
+	// Check authentication and load projects on mount
+	onMount(async () => {
+		if (!checkAuthentication()) {
+			return;
+		}
+
+		await loadProjects();
 	});
 
 	// Check if user is authenticated
@@ -30,15 +36,40 @@
 		return true;
 	}
 
+	// Load projects using authenticated user ID
+	async function loadProjects() {
+		if (!auth.user?.id) {
+			error = 'ID пользователя не найден';
+			loading = false;
+			return;
+		}
+
+		try {
+			loading = true;
+			error = null;
+
+			const projectsData = await getAllProjectsForAgent(auth.user.id);
+			projects = projectsData || [];
+		} catch (err) {
+			console.error('Failed to load projects:', err);
+			error = {
+				message: 'Не удалось загрузить проекты',
+				canRetry: true
+			};
+		} finally {
+			loading = false;
+		}
+	}
+
 	function getStatusBadge(is_active) {
 		return is_active
 			? 'bg-green-500/20 text-green-400 border-green-500/30'
 			: 'bg-gray-500/20 text-gray-400 border-gray-500/30';
 	}
 
-	// Function to refresh the page (reload from server)
-	function refreshProjects() {
-		window.location.reload();
+	// Function to refresh projects
+	async function refreshProjects() {
+		await loadProjects();
 	}
 </script>
 
@@ -120,26 +151,41 @@
 					<div class="flex items-center gap-4">
 						<div class="text-sm text-gray-300">Всего: {projects.length}</div>
 						<button
-							class="rounded bg-indigo-500/20 px-3 py-1 text-sm text-indigo-300 transition-colors hover:bg-indigo-500/30"
+							class="rounded bg-indigo-500/20 px-3 py-1 text-sm text-indigo-300 transition-colors hover:bg-indigo-500/30 disabled:opacity-50"
 							onclick={refreshProjects}
+							disabled={loading}
 							title="Обновить список проектов"
 						>
-							<div class="flex items-center">
-								<svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-									/>
-								</svg>
-								Обновить
-							</div>
+							{#if loading}
+								<div class="flex items-center">
+									<div
+										class="mr-2 h-4 w-4 animate-spin rounded-full border border-indigo-300 border-t-transparent"
+									></div>
+									Обновление...
+								</div>
+							{:else}
+								<div class="flex items-center">
+									<svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+										/>
+									</svg>
+									Обновить
+								</div>
+							{/if}
 						</button>
 					</div>
 				</div>
 
-				{#if projects.length === 0 && !error}
+				{#if loading}
+					<div class="flex flex-col items-center justify-center py-12">
+						<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-indigo-400"></div>
+						<p class="mt-4 text-sm text-gray-400">Загрузка проектов...</p>
+					</div>
+				{:else if projects.length === 0 && !error}
 					<div class="py-12 text-center">
 						<svg
 							class="mx-auto h-12 w-12 text-gray-500"
