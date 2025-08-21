@@ -1,5 +1,5 @@
 <script>
-	import { visibleMobileMenu } from '$lib/state/visibleMobileMenu.svelte';
+	import { openMobileMenu } from '$lib/state/visibleMobileMenu.svelte';
 	import { auth, logout } from '$lib/state/auth.svelte.js';
 	import MobileMenu from './MobileMenu/index.svelte';
 </script>
@@ -13,7 +13,7 @@
     </div> -->
 	<div class="flex lg:hidden">
 		<button
-			onclick={() => (visibleMobileMenu.value = true)}
+			onclick={openMobileMenu}
 			type="button"
 			class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-400"
 		>
