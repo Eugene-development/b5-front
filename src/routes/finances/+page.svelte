@@ -213,7 +213,7 @@
 			<!-- Page Header -->
 			<div class="mx-auto mb-16 text-center">
 				<h1 class="text-4xl font-normal tracking-widest text-white sm:text-6xl">Финансы</h1>
-				<p class="mt-6 text-lg/8 text-gray-300">Учёт выплат, бонусов и финансовых операций</p>
+				<!-- <p class="mt-6 text-lg/8 text-gray-300">Учёт выплат, бонусов и финансовых операций</p> -->
 			</div>
 
 			<!-- Financial Overview Cards -->

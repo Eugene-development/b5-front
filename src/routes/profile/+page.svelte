@@ -186,9 +186,9 @@
 			<!-- Page Header -->
 			<div class="mx-auto mb-16 text-center">
 				<h1 class="text-4xl font-normal tracking-widest text-white sm:text-6xl">Профиль</h1>
-				<p class="mt-6 text-lg/8 text-gray-300">
+				<!-- <p class="mt-6 text-lg/8 text-gray-300">
 					Информация о пользователе {auth.user?.name || 'пользователь'}
-				</p>
+				</p> -->
 			</div>
 
 			<!-- User Info Card -->

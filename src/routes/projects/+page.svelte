@@ -95,11 +95,11 @@
 		</div>
 	</div>
 {:else}
-	<div class="relative isolate bg-gray-900 py-24 sm:py-32">
+	<div class="relative isolate min-h-screen bg-gray-900 py-24 sm:py-32">
 		<div class="mx-auto max-w-7xl px-6 lg:px-8">
 			<div class="mx-auto mb-10 text-center">
 				<h1 class="text-4xl font-normal tracking-widest text-white sm:text-6xl">Проекты</h1>
-				<p class="mt-6 text-lg/8 text-gray-300">Ваши проекты из базы Bonus5 (GraphQL)</p>
+				<!-- <p class="mt-6 text-lg/8 text-gray-300">Ваши проекты из базы Bonus5 (GraphQL)</p> -->
 			</div>
 
 			{#if error}
@@ -147,7 +147,7 @@
 
 			<div class="rounded-lg bg-white/5 p-6 backdrop-blur-sm">
 				<div class="mb-4 flex items-center justify-between">
-					<h2 class="text-xl font-semibold text-white">Список проектов</h2>
+					<!-- <h2 class="text-xl font-semibold text-white">Список проектов</h2> -->
 					<div class="flex items-center gap-4">
 						<div class="text-sm text-gray-300">Всего: {projects.length}</div>
 						<button
