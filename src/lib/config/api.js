@@ -4,14 +4,12 @@
  */
 
 // API Base URL from environment or default
-// export const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL || 'https://auth.bonus5.ru';
-// export const API_BASE_URL = 'http://localhost:8000';
-export const API_BASE_URL = 'https://auth.bonus5.ru';
+// export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 /**
  * API Configuration object
  */
 export const API_CONFIG = {
-	baseUrl: API_BASE_URL,
+	baseUrl: import.meta.env.VITE_API_BASE_URL,
 	version: 'api',
 
 	// API endpoints for Laravel backend
